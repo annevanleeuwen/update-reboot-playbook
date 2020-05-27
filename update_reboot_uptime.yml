@@ -1,0 +1,24 @@
+---
+- name: yum update all at once
+  hosts: servers
+  gather_facts: yes
+  tasks:
+    - name: yum update all packages
+      yum:
+        name: '*'
+        state: latest
+
+- name: reboot servers one by one plus uptime
+  serial: 1
+  hosts: servers
+  gather_facts: no
+  tasks:
+    - name: reboot
+      reboot:
+        test_command: uptime
+
+    - name: check uptime
+      shell: uptime
+      register: UPTIME
+
+    - debug: msg={{UPTIME.stdout}}
